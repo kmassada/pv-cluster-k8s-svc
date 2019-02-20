@@ -1,0 +1,40 @@
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "spec": {
+    "containers": [
+      {
+        "name": "debug-$APPLICATION",
+        "image": "gcr.io/$PROJECT_ID/$GCR_BUCKET/debug-container:latest",
+        "stdin": true,
+        "tty": true,
+        "args": [ "sh" ],
+        "env": [
+          {
+            "name": "TOKEN",
+            "valueFrom": {
+              "secretKeyRef": {
+                "key": "token",
+                "name": "$APPLICATION-token"
+              }
+            }
+          }
+        ],
+        "volumeMounts": [
+          {
+            "mountPath": "/var/run/secret/$APPLICATION",
+            "name": "$APPLICATION-token"
+          }
+        ]
+      }
+    ],
+    "volumes": [
+      {
+        "name": "$APPLICATION-token",
+        "secret": {
+          "secretName": "$APPLICATION-token"
+        }
+      }
+    ]
+  }
+}
